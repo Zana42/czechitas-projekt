@@ -1,0 +1,15 @@
+create or replace table "pametnici" as 
+select "ID",
+"witness_name",
+"year_of_birth",
+"decade_of_birth",
+"tags_aniversary",
+"tags_name",
+"url" as "URL",
+"gender",
+"decade_of_birth" as "running_decade"
+from "pametnici_vstup";
+
+update "pametnici" set "year_of_birth" = '' where "year_of_birth" = '0' or "year_of_birth" = '-';
+
+update "pametnici" set "decade_of_birth" = '' where "decade_of_birth" = '0' or "decade_of_birth" = '-';
