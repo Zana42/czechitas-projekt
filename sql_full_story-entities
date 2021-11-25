@@ -1,0 +1,79 @@
+alter table "analysis-result-entities_full_story" add column "place"  varchar(16777216);
+
+update  "analysis-result-entities_full_story" set "text" = 'Koncentrační tábor Auschwitz-Birkenau'  where "text" in ( 'Auschwitz', 'Birkenau', 'Osvětim', 'Rampa');
+
+update "analysis-result-entities_full_story" set "place" =
+    case when "text" in ('Bartolomějský') then 'Bartolomějská'
+    when "text" in ('Slovenská republika') then 'Slovensko'
+    when "text" in ('Česká republika') then 'Česko'
+    when "text" in ('Sovět') then 'Sovětský svaz'
+    when "text" in ('Československá rebublika' ,'Československý stát' , 'ČSR' , 'ČSSR') then 'Československo'
+    when "text" in ('okres Ostrava-město') then  'Ostrava'
+    when "text" in ( 'Německá demokratická republika', 'Západní Německo' , 'Východní Německo') then 'Německo'
+    else "text"
+    end;
+
+create or replace table "full_story-entities" as
+select "ID",
+"type",
+"text",
+"score",
+"entityUid",
+"sentimentValue",
+"sentimentPolarity",
+"sentimentLabel",
+"sentimentDetailedLabel",
+"latitude",
+"longitude"
+from "analysis-result-entities_full_story" as AR
+left join "full_story_located" as LL
+on AR."text" = LL."query";
+
+update "full_story-entities" set "text" = 'Alexander Dubček', "entityUid" = concat('G',"entityUid")
+where "text" = 'Dubček';
+
+update "full_story-entities" set "text" = 'Klement Gottwald', "entityUid" = concat('G',"entityUid")
+where "text" = 'Gottwald';
+
+update "full_story-entities" set "text" = 'Leonid Brežněv', "entityUid" = concat('G',"entityUid")
+where "text" = 'Brežněv';
+
+update "full_story-entities" set "text" = 'Gustav Husák', "entityUid" = concat('G',"entityUid")
+where "text" = 'Husák';
+
+update "full_story-entities" set "text" = 'Josif Stalin ', "entityUid" = concat('G',"entityUid")
+where "text" = '%Stalin';
+
+update "full_story-entities" set "text" = 'Jozef Gabčík', "entityUid" = concat('G',"entityUid")
+where "text" = 'Gabčík';
+
+update "full_story-entities" set "text" = 'Jan Kubiš', "entityUid" = concat('G',"entityUid")
+where "text" = 'Kubiš';
+
+update "full_story-entities" set "text" = 'Jan Werich', "entityUid" = concat('G',"entityUid")
+where "text" = 'Werich';
+
+update "full_story-entities" set "text" = 'George Smith Patton', "entityUid" = concat('G',"entityUid")
+where "text" = '%Patton';
+
+update "full_story-entities" set "text" = 'Michail Sergejevič Gorbačov', "entityUid" = concat('G',"entityUid")
+where "text" = '%Gorbačov';
+
+update "full_story-entities" set "text" = 'Adolf Hitler', "entityUid" = 'G352'
+where "text" = 'Hitler';
+
+update "full_story-entities" set "text" = 'Josef Mengele', "entityUid" = concat('G',"entityUid")
+where "text" = 'Mengele';
+
+delete from "full_story-entities"
+where "type" = 'person' and "entityUid" not like 'G%'
+;
+
+update "full_story-entities" set "text" = 'Charta 77', "entityUid" = 'G4354186'
+where "text" = 'Charta';
+
+delete from "full_story-entities" where "type" = 'product' and "entityUid" not like 'G%';
+
+delete from "full_story-entities" where "text" ilike 'paměť národa';
+
+delete from "full_story-entities" where "type" = 'URL';
