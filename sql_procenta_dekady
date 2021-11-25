@@ -1,0 +1,51 @@
+//vyrobi tabuku, proceta_dekady
+
+create or replace table "procenta_dekady" as
+    select
+        FSE."text" as "text" ,
+        p."gender",
+        p."decade_of_birth",
+        count(distinct(p."ID")) as "pocet_pametniku",
+        //count(FSE.ID) as "pocet_pametniku_v_dekade",
+        case when p."decade_of_birth" = '1880' and "gender" = 'muz' then (select count(id) from "pametnici" where "decade_of_birth" = '1880' and "gender" = 'muz')
+         when p."decade_of_birth" = '1890' and "gender" = 'muz' then (select count(id) from "pametnici" where "decade_of_birth" = '1890' and "gender" = 'muz')
+         when p."decade_of_birth" = '1900' and "gender" = 'muz' then (select count(id) from "pametnici" where "decade_of_birth" = '1900' and "gender" = 'muz')
+         when p."decade_of_birth" = '1910' and "gender" = 'muz' then (select count(id) from "pametnici" where "decade_of_birth" = '1910' and "gender" = 'muz')
+         when p."decade_of_birth" = '1920' and "gender" = 'muz' then (select count(id) from "pametnici" where "decade_of_birth" = '1920' and "gender" = 'muz')
+         when p."decade_of_birth" = '1930' and "gender" = 'muz' then (select count(id) from "pametnici" where "decade_of_birth" = '1930' and "gender" = 'muz')
+         when p."decade_of_birth" = '1940' and "gender" = 'muz' then (select count(id) from "pametnici" where "decade_of_birth" = '1940' and "gender" = 'muz')
+         when p."decade_of_birth" = '1950'  and "gender" = 'muz'then (select count(id) from "pametnici" where "decade_of_birth" = '1950' and "gender" = 'muz')
+         when p."decade_of_birth" = '1960'  and "gender" = 'muz'then (select count(id) from "pametnici" where "decade_of_birth" = '1960' and "gender" = 'muz')
+         when p."decade_of_birth" = '1970'  and "gender" = 'muz'then (select count(id) from "pametnici" where "decade_of_birth" = '1970' and "gender" = 'muz')
+         when p."decade_of_birth" = '1980'  and "gender" = 'muz'then (select count(id) from "pametnici" where "decade_of_birth" = '1980' and "gender" = 'muz')
+         when p."decade_of_birth" = '1990' and "gender" = 'muz' then (select count(id) from "pametnici" where "decade_of_birth" = '1990' and "gender" = 'muz')
+         when p."decade_of_birth" = '2000' and "gender" = 'muz' then (select count(id) from "pametnici" where "decade_of_birth" = '2000' and "gender" = 'muz')
+         when p."decade_of_birth" = '2010' and "gender" = 'muz' then (select count(id) from "pametnici" where "decade_of_birth" = '2010' and "gender" = 'muz')
+         when p."decade_of_birth" = '2020'  and "gender" = 'muz'then (select count(id) from "pametnici" where "decade_of_birth" = '2020' and "gender" = 'muz')
+         
+          when p."decade_of_birth" = '1880' and "gender" = 'zena' then (select count(id) from "pametnici" where "decade_of_birth" = '1880' and "gender" = 'zena')
+         when p."decade_of_birth" = '1890' and "gender" = 'zena' then (select count(id) from "pametnici" where "decade_of_birth" = '1890' and "gender" = 'zena')
+         when p."decade_of_birth" = '1900' and "gender" = 'zena' then (select count(id) from "pametnici" where "decade_of_birth" = '1900' and "gender" = 'zena')
+         when p."decade_of_birth" = '1910' and "gender" = 'zena' then (select count(id) from "pametnici" where "decade_of_birth" = '1910' and "gender" = 'zena')
+         when p."decade_of_birth" = '1920' and "gender" = 'zena' then (select count(id) from "pametnici" where "decade_of_birth" = '1920' and "gender" = 'zena')
+         when p."decade_of_birth" = '1930' and "gender" = 'zena' then (select count(id) from "pametnici" where "decade_of_birth" = '1930' and "gender" = 'zena')
+         when p."decade_of_birth" = '1940' and "gender" = 'zena' then (select count(id) from "pametnici" where "decade_of_birth" = '1940' and "gender" = 'zena')
+         when p."decade_of_birth" = '1950'  and "gender" = 'zena'then (select count(id) from "pametnici" where "decade_of_birth" = '1950' and "gender" = 'zena')
+         when p."decade_of_birth" = '1960'  and "gender" = 'zena'then (select count(id) from "pametnici" where "decade_of_birth" = '1960' and "gender" = 'zena')
+         when p."decade_of_birth" = '1970'  and "gender" = 'zena'then (select count(id) from "pametnici" where "decade_of_birth" = '1970' and "gender" = 'zena')
+         when p."decade_of_birth" = '1980'  and "gender" = 'zena'then (select count(id) from "pametnici" where "decade_of_birth" = '1980' and "gender" = 'zena')
+         when p."decade_of_birth" = '1990' and "gender" = 'zena' then (select count(id) from "pametnici" where "decade_of_birth" = '1990' and "gender" = 'zena')
+         when p."decade_of_birth" = '2000' and "gender" = 'zena' then (select count(id) from "pametnici" where "decade_of_birth" = '2000' and "gender" = 'zena')
+         when p."decade_of_birth" = '2010' and "gender" = 'zena' then (select count(id) from "pametnici" where "decade_of_birth" = '2010' and "gender" = 'zena')
+         when p."decade_of_birth" = '2020'  and "gender" = 'zena'then (select count(id) from "pametnici" where "decade_of_birth" = '2020' and "gender" = 'zena')
+        end  as "celkovy_pocet_pametniku_v_dekade",
+        
+             "pocet_pametniku" /  "celkovy_pocet_pametniku_v_dekade" * 100 as "procenta"
+             
+    from 
+        "pametnici" as P
+        left join "full_story-entities" as FSE
+            on P.ID = FSE.ID
+    where FSE."text" is not null
+    group by FSE."text", p."gender", p."decade_of_birth"
+    order by FSE."text" desc;
