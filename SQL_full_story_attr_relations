@@ -1,0 +1,19 @@
+create or replace table "full_story_attr_relations" as
+select "ID",
+"name",
+"negated",
+"subject",
+"object",
+case when "negated" = 'True' then concat('ne', "name")
+    else "name"
+    end as "name_negaed",
+"subjectType",
+"objectType",
+"subjectUid",
+"objectUid",
+"sentimentValue",
+"sentimentPolarity",
+"sentimentLabel",
+"sentimentDetailedLabel"
+from "analysis-result-relations_full_story"
+where "type" = 'ATTR';
