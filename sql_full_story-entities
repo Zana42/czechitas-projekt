@@ -1,18 +1,39 @@
+--vyčistí trochu lokace
 alter table "analysis-result-entities_full_story" add column "place"  varchar(16777216);
 
+--opraví jména na koncentrační tábor
 update  "analysis-result-entities_full_story" set "text" = 'Koncentrační tábor Auschwitz-Birkenau'  where "text" in ( 'Auschwitz', 'Birkenau', 'Osvětim', 'Rampa');
 
+update  "analysis-result-entities_full_story" set "text" = 'Koncentrační tábor Treblinka'  where "text" in ( 'Treblinka');
+
+update  "analysis-result-entities_full_story" set "text" = 'Koncentrační tábor Bergen-Belsen'  where "text" in ( 'Bergen-Belsen',  'Bergen-Belsenu');
+
+update  "analysis-result-entities_full_story" set "text" = 'Koncentrační tábor Terezín'  where "text" in ( 'Terezín',  'Malá pevnost', 'Malá Pevnst');
+
+update  "analysis-result-entities_full_story" set "text" = 'Koncentrační tábor Dachau'  where "text" in ( 'Dachau');
+
+update  "analysis-result-entities_full_story" set "text" = 'Koncentrační tábor Mauthausen'  where "text" in ( 'Mauthausen');
+
+update  "analysis-result-entities_full_story" set "text" = 'Koncentrační tábor Buchenwald'  where "text" in ( 'Buchenwald');
+
+update  "analysis-result-entities_full_story" set "text" = 'Koncentrační tábor Ravensbrück'  where "text" in ( 'Ravensbrück');
+
+update  "analysis-result-entities_full_story" set "text" = 'Koncentrační tábor Sachsenhausen'  where "text" in ( 'Sachsenhausen');
+
+--sjednotí některé názvy míst
 update "analysis-result-entities_full_story" set "place" =
     case when "text" in ('Bartolomějský') then 'Bartolomějská'
     when "text" in ('Slovenská republika') then 'Slovensko'
     when "text" in ('Česká republika') then 'Česko'
     when "text" in ('Sovět') then 'Sovětský svaz'
-    when "text" in ('Československá rebublika' ,'Československý stát' , 'ČSR' , 'ČSSR') then 'Československo'
+    when "text" in ('Československá rebublika' ,'Československý stát', 'československý stát', 'ČSR' , 'ČSSR') then 'Československo'
     when "text" in ('okres Ostrava-město') then  'Ostrava'
-    when "text" in ( 'Německá demokratická republika', 'Západní Německo' , 'Východní Německo') then 'Německo'
+    when "text" in ( 'Německá demokratická republika', 'Západní Německo' , 'Východní Německo', 'Rajch') then 'Německo'
+    when "text" in ( 'Jáchymovsko') then 'Jáchymov'
     else "text"
     end;
 
+--vytvoří tabulku
 create or replace table "full_story-entities" as
 select "ID",
 "type",
@@ -23,11 +44,68 @@ select "ID",
 "sentimentPolarity",
 "sentimentLabel",
 "sentimentDetailedLabel",
+"place",
 "latitude",
 "longitude"
 from "analysis-result-entities_full_story" as AR
 left join "full_story_located" as LL
-on AR."text" = LL."query";
+on AR."place" = LL."query";
+
+--Vyhodí lokace u míst, kam nepatří
+update "full_story-entities" set "latitude" = null, "longitude" = null where "place" in ('Pionýr', 'Polárka', 'Honků', 'Disk', 'Disko', 'František', 'Němce', 'Svoboda', 'Charta', 'Sokol', 'Pavel', 'Beneš', 'Petr', 'Junák', 'Gorttwald', 'Věra', 'Pražské Povstání', 'JZD', 'Anna', 'Hedvika', 'Jednota', 'Hana', 'Petra', 'Emilie', 'Pamětnice', 'Nikolaj', 'Sokol', 'Skauti', 'Kosna', 'Vašek', 'Slánský', 'Josefa', 'Zápotocký', 'Kateřina', 'Helena', 'Ivan', 'Libuše', 'Pamětník', 'Vlasta', 'Stanislav','Mikuláš', 'Hranice', 'Ludvík', 'Hlinka');
+
+--Přiřadí lokace k místům, kam patří
+update "full_story-entities" set "latitude" =  null where "latitude" = '';
+
+update "full_story-entities" set "latitude" =  
+    case when "place" in ('Československo') then   49.0549783
+     when "place" in ('Rakousko - Uhersko') then 48.3961181
+     when "place" in ('Sovětský svaz') then  55.7948556
+     when "place" in ('Jugoslávie') then 49.0549783
+     when "place" in ('Podkarpatská Rus') then  48.6660672
+     when "place" in ('Cejl') then 49.1993081
+     
+     when "place" in ('Koncentrační tábor Dachau') then  48.268832258
+     when "place" in ('Koncentrační tábor Mauthausen') then 48.2571
+     when "place" in ('Koncentrační tábor Buchenwald') then  51.01999992
+     when "place" in ('Koncentrační tábor Auschwitz-Birkenau') then 50.0344
+     when "place" in ('Koncentrační tábor Ravensbrück') then 53.1914
+     when "place" in ('Koncentrační tábor Sachsenhausen') then  52.7667
+     when "place" in ('Koncentrační tábor Treblinka') then 52.6312
+     when "place" in ('Koncentrační tábor Bergen-Belsen') then 52.7575
+     when "place" in ('Koncentrační tábor Terezín') then 50.514
+     else "latitude"
+   end;
+
+update "full_story-entities" set "longitude" =  null where "longitude" = '';
+
+update "full_story-entities" set "longitude" =  
+    case when "place" in ('Československo') then   18.0879500
+     when "place" in ('Rakousko-Uhersko') then 16.4346042
+     when "place" in ('Sovětský svaz') then 36.8599222
+     when "place" in ('Jugoslávie') then 19.2181683
+     when "place" in ('Podkarpatská Rus') then 22.5723461
+    when "place" in ('Cejl') then 16.6247478
+     
+     when "place" in ('Koncentrační tábor Dachau') then 11.46749813
+     when "place" in ('Koncentrační tábor Mauthausen') then 14.5001
+     when "place" in ('Koncentrační tábor Buchenwald') then 11.242165698
+     when "place" in ('Koncentrační tábor Auschwitz-Birkenau') then 50.0344
+     when "place" in ('Koncentrační tábor Ravensbrück') then  53.1914
+     when "place" in ('Koncentrační tábor Sachsenhausen') then  13.2629 
+     when "place" in ('Koncentrační tábor Treblinka') then 22.0523
+     when "place" in ('Koncentrační tábor Bergen-Belsen') then 9.9127
+     when "place" in ('Koncentrační tábor Terzín') then 14.1662
+        
+     else "longitude"
+   end;
+
+--vyčistí nejčastější chyby ve jménech
+
+update "full_story-entities" set "text" = 'Skaut' where "text" = 'Skauti';
+
+update "full_story-entities" set "type" = 'organization'
+where "text" in ('Skaut', 'Pionýr', 'Junák', 'Gestapo', 'Charta' ) ;
 
 update "full_story-entities" set "text" = 'Alexander Dubček', "entityUid" = concat('G',"entityUid")
 where "text" = 'Dubček';
@@ -65,15 +143,53 @@ where "text" = 'Hitler';
 update "full_story-entities" set "text" = 'Josef Mengele', "entityUid" = concat('G',"entityUid")
 where "text" = 'Mengele';
 
+update "full_story-entities" set "text" = 'Leonid Iljič Brežněv', "entityUid" = concat('G',"entityUid")
+where "text" = 'Brežněv';
+
+update "full_story-entities" set "text" = 'Jan Palach', "entityUid" = concat('G',"entityUid")
+where "text" = 'Palach';
+
+update "full_story-entities" set "text" = 'Jan Amos Kmenský', "entityUid" = concat('G',"entityUid")
+where "text" = 'Komenský';
+
+update "full_story-entities" set "text" = 'Ivan Martin Jirous', "entityUid" = concat('G',"entityUid")
+where "text" = 'Magor';
+
+update "full_story-entities" set "text" = 'Milada Horáková', "entityUid" = concat('G',"entityUid")
+where "text" = 'Horáková';
+
+update "full_story-entities" set "text" = 'Jozip Broz Tito', "entityUid" = concat('G',"entityUid")
+where "text" = 'Tito';
+
+update "full_story-entities" set "text" = 'Jaroslav Seifert', "entityUid" = concat('G',"entityUid")
+where "text" = 'Seifert';
+
+update "full_story-entities" set "text" = 'Alexej Čepička', "entityUid" = concat('G',"entityUid")
+where "text" = 'Čepička';
+
+update "full_story-entities" set "text" = 'Winston Churchill', "entityUid" = concat('G',"entityUid")
+where "text" = 'Churchill';
+
 delete from "full_story-entities"
 where "type" = 'person' and "entityUid" not like 'G%'
 ;
 
+--sjednotí název charty a pražského jara, odstraní paměť národa
 update "full_story-entities" set "text" = 'Charta 77', "entityUid" = 'G4354186'
 where "text" = 'Charta';
+
+update "full_story-entities" set "text" = 'Pražské jaro 1968', "entityUid" = 'G162401'
+where "text" = 'Pražské jaro';
 
 delete from "full_story-entities" where "type" = 'product' and "entityUid" not like 'G%';
 
 delete from "full_story-entities" where "text" ilike 'paměť národa';
+
+--vytvoří unor 48 a srpen 68 
+update "full_story-entities" set "text" = 'Únor 1948', "entityUid" = 'G1137957', "type" = 'event'
+where "text" = '1948';
+
+update "full_story-entities" set "text" = 'Srpen 1968', "type" = 'event'
+where "text" = 'Varšavská smlouva';
 
 delete from "full_story-entities" where "type" = 'URL';
